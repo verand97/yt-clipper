@@ -27,6 +27,18 @@ class ClipController extends Controller
             'end_time.regex' => 'Format waktu harus HH:MM:SS atau MM:SS.',
         ]);
 
+        // Validate that end_time > start_time
+        $startSeconds = $this->timeToSeconds($validated['start_time']);
+        $endSeconds = $this->timeToSeconds($validated['end_time']);
+
+        if ($endSeconds <= $startSeconds) {
+            return back()->withErrors(['end_time' => 'Waktu akhir harus lebih besar dari waktu mulai.'])->withInput();
+        }
+
+        if (($endSeconds - $startSeconds) > 1800) {
+            return back()->withErrors(['end_time' => 'Durasi clip maksimal 30 menit.'])->withInput();
+        }
+
         $clipJob = ClipJob::create([
             'youtube_url' => $validated['youtube_url'],
             'start_time' => $validated['start_time'],
@@ -62,5 +74,18 @@ class ClipController extends Controller
         }
 
         return response()->download($filePath);
+    }
+
+    private function timeToSeconds(string $time): int
+    {
+        $parts = explode(':', $time);
+
+        if (count($parts) === 3) {
+            return ((int) $parts[0] * 3600) + ((int) $parts[1] * 60) + (int) $parts[2];
+        } elseif (count($parts) === 2) {
+            return ((int) $parts[0] * 60) + (int) $parts[1];
+        }
+
+        return (int) $parts[0];
     }
 }

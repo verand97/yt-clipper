@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'ytdlp' => [
+        'path' => env('YTDLP_PATH', 'yt-dlp'),
+    ],
+
+    'ffmpeg' => [
+        'path' => env('FFMPEG_PATH', 'ffmpeg'),
+    ],
+
 ];
