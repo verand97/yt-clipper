@@ -38,7 +38,7 @@
             {{-- Title --}}
             <h1 class="animate-fade-up-delay-1 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
                 Potong video YouTube<br>
-                <span class="bg-gradient-to-r from-accent via-accent-glow to-pop bg-clip-text text-transparent">dalam sekejap</span>
+                <span class="bg-linear-to-r from-accent via-accent-glow to-pop bg-clip-text text-transparent">dalam sekejap</span>
             </h1>
 
             {{-- Subtitle --}}
@@ -133,8 +133,8 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-        <div class="mb-5 flex items-start gap-3 px-4 py-3.5 rounded-xl bg-pop/[0.06] border border-pop/20 animate-scale-in">
-            <div class="w-5 h-5 rounded-full bg-pop/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <div class="mb-5 flex items-start gap-3 px-4 py-3.5 rounded-xl bg-pop/6 border border-pop/20 animate-scale-in">
+            <div class="w-5 h-5 rounded-full bg-pop/20 flex items-center justify-center shrink-0 mt-0.5">
                 <i data-lucide="check" class="w-3 h-3 text-pop"></i>
             </div>
             <p class="text-sm text-pop/90">{{ session('success') }}</p>
@@ -142,10 +142,10 @@
         @endif
 
         @if($errors->any())
-        <div class="mb-5 space-y-2 px-4 py-3.5 rounded-xl bg-red-500/[0.06] border border-red-500/20 animate-scale-in">
+        <div class="mb-5 space-y-2 px-4 py-3.5 rounded-xl bg-red-500/6 border border-red-500/20 animate-scale-in">
             @foreach($errors->all() as $error)
             <p class="text-sm text-red-400 flex items-center gap-2">
-                <i data-lucide="x-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                <i data-lucide="x-circle" class="w-3.5 h-3.5 shrink-0"></i>
                 {{ $error }}
             </p>
             @endforeach
@@ -370,28 +370,28 @@
                             </div>
 
                             {{-- Parent Status Badge --}}
-                            <div class="flex-shrink-0 self-start sm:self-center">
+                            <div class="shrink-0 self-start sm:self-center">
                                 @switch($clip->status)
                                     @case('pending')
-                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/[0.06] border border-yellow-500/15">
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/6 border border-yellow-500/15">
                                             <span class="w-2 h-2 rounded-full bg-yellow-500/60 animate-pulse"></span>
                                             <span class="text-xs text-yellow-400 font-medium">Antri Analisis</span>
                                         </div>
                                         @break
                                     @case('processing')
-                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/[0.06] border border-accent/15 shimmer-bg">
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/6 border border-accent/15 shimmer-bg">
                                             <span class="w-2 h-2 rounded-full bg-accent animate-pulse-soft"></span>
                                             <span class="text-xs text-accent font-medium">Menganalisis...</span>
                                         </div>
                                         @break
                                     @case('completed')
-                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pop/[0.06] border border-pop/15">
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pop/6 border border-pop/15">
                                             <span class="w-2 h-2 rounded-full bg-pop"></span>
                                             <span class="text-xs text-pop font-medium" title="{{ $clip->error_message ?? '' }}">Siap</span>
                                         </div>
                                         @break
                                     @case('failed')
-                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/[0.06] border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/6 border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
                                             <span class="w-2 h-2 rounded-full bg-red-400/60"></span>
                                             <span class="text-xs text-red-400 font-medium">Gagal</span>
                                         </div>
@@ -412,7 +412,7 @@
                                         <div class="child-clip-item flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-surface-800/60 border border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-800 transition-all duration-200" data-child-id="{{ $child->id }}" data-status="{{ $child->status }}">
                                             <div class="min-w-0 flex-1">
                                                 <div class="flex items-start gap-2">
-                                                    <i data-lucide="video" class="w-3.5 h-3.5 text-pop flex-shrink-0 mt-0.5"></i>
+                                                    <i data-lucide="video" class="w-3.5 h-3.5 text-pop shrink-0 mt-0.5"></i>
                                                     <div>
                                                         <h4 class="text-xs font-semibold text-gray-200 leading-normal">{{ str_replace($clip->video_title . ' - ', '', $child->video_title) }}</h4>
                                                         <span class="inline-flex items-center gap-1 text-[9px] text-gray-500 font-mono bg-surface-700/80 px-1.5 py-0.5 rounded mt-1">
@@ -423,16 +423,16 @@
                                                 </div>
                                             </div>
 
-                                            <div class="flex-shrink-0">
+                                            <div class="shrink-0">
                                                 @switch($child->status)
                                                     @case('pending')
-                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-yellow-500/[0.04] border border-yellow-500/10">
+                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-yellow-500/4 border border-yellow-500/10">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-yellow-500/60 animate-pulse"></span>
                                                             <span class="text-[10px] text-yellow-400 font-medium">Antri</span>
                                                         </div>
                                                         @break
                                                     @case('processing')
-                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-accent/[0.04] border border-accent/10 shimmer-bg">
+                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-accent/4 border border-accent/10 shimmer-bg">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse-soft"></span>
                                                             <span class="text-[10px] text-accent font-medium">Memotong</span>
                                                         </div>
@@ -444,7 +444,7 @@
                                                         </a>
                                                         @break
                                                     @case('failed')
-                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/[0.04] border border-red-500/10 cursor-help" title="{{ $child->error_message }}">
+                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/4 border border-red-500/10 cursor-help" title="{{ $child->error_message }}">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-red-400/60"></span>
                                                             <span class="text-[10px] text-red-400 font-medium">Gagal</span>
                                                         </div>
@@ -492,16 +492,16 @@
                         </div>
 
                         {{-- Right: status/action --}}
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             @switch($clip->status)
                                 @case('pending')
-                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/[0.06] border border-yellow-500/15">
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/6 border border-yellow-500/15">
                                         <span class="w-2 h-2 rounded-full bg-yellow-500/60 animate-pulse"></span>
                                         <span class="text-xs text-yellow-400 font-medium">Antri</span>
                                     </div>
                                     @break
                                 @case('processing')
-                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/[0.06] border border-accent/15 shimmer-bg">
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/6 border border-accent/15 shimmer-bg">
                                         <span class="w-2 h-2 rounded-full bg-accent animate-pulse-soft"></span>
                                         <span class="text-xs text-accent font-medium">Memproses</span>
                                     </div>
@@ -513,7 +513,7 @@
                                     </a>
                                     @break
                                 @case('failed')
-                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/[0.06] border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/6 border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
                                         <span class="w-2 h-2 rounded-full bg-red-400/60"></span>
                                         <span class="text-xs text-red-400 font-medium">Gagal</span>
                                     </div>
