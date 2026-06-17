@@ -173,44 +173,143 @@
                 >
             </div>
 
-            {{-- Time inputs --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <label for="start_time" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="play" class="w-3 h-3 text-pop"></i>
-                        Waktu Mulai
-                    </label>
-                    <input
-                        type="text"
-                        id="start_time"
-                        name="start_time"
-                        value="{{ old('start_time') }}"
-                        placeholder="00:30"
-                        class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white placeholder-gray-600 outline-none font-mono text-center tracking-wider"
-                        required
-                    >
+            {{-- Method Toggle --}}
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="settings-2" class="w-3.5 h-3.5 text-accent"></i>
+                    Metode Pemotongan
+                </label>
+                <div class="grid grid-cols-2 gap-2 p-1.5 bg-surface-900 rounded-xl border border-surface-600">
+                    <button type="button" id="tab-manual" class="py-2.5 text-xs font-semibold rounded-lg transition-all text-white bg-surface-700 shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                        Potong Manual
+                    </button>
+                    <button type="button" id="tab-smart" class="py-2.5 text-xs font-semibold rounded-lg transition-all text-gray-400 hover:text-gray-200 flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-pop"></i>
+                        Klip Pintar (AI)
+                    </button>
                 </div>
-                <div class="space-y-2">
-                    <label for="end_time" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="square" class="w-3 h-3 text-red-400"></i>
-                        Waktu Selesai
-                    </label>
-                    <input
-                        type="text"
-                        id="end_time"
-                        name="end_time"
-                        value="{{ old('end_time') }}"
-                        placeholder="02:15"
-                        class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white placeholder-gray-600 outline-none font-mono text-center tracking-wider"
-                        required
-                    >
-                </div>
+                <input type="hidden" name="is_smart" id="is_smart_input" value="0">
             </div>
 
-            <p class="text-[11px] text-gray-600 flex items-center gap-1.5">
-                <i data-lucide="info" class="w-3 h-3"></i>
-                Format: MM:SS atau HH:MM:SS — Durasi maksimal 30 menit per clip
-            </p>
+            {{-- Manual Time Inputs --}}
+            <div id="manual-fields" class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="start_time" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="play" class="w-3 h-3 text-pop"></i>
+                            Waktu Mulai
+                        </label>
+                        <input
+                            type="text"
+                            id="start_time"
+                            name="start_time"
+                            value="{{ old('start_time') }}"
+                            placeholder="00:30"
+                            class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white placeholder-gray-600 outline-none font-mono text-center tracking-wider"
+                            required
+                        >
+                    </div>
+                    <div class="space-y-2">
+                        <label for="end_time" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="square" class="w-3 h-3 text-red-400"></i>
+                            Waktu Selesai
+                        </label>
+                        <input
+                            type="text"
+                            id="end_time"
+                            name="end_time"
+                            value="{{ old('end_time') }}"
+                            placeholder="02:15"
+                            class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white placeholder-gray-600 outline-none font-mono text-center tracking-wider"
+                            required
+                        >
+                    </div>
+                </div>
+                <p class="text-[11px] text-gray-600 flex items-center gap-1.5">
+                    <i data-lucide="info" class="w-3 h-3"></i>
+                    Format: MM:SS atau HH:MM:SS — Durasi maksimal 30 menit per clip
+                </p>
+            </div>
+
+            {{-- Smart Clip Options --}}
+            <div id="smart-fields" class="space-y-4 hidden">
+                <div class="space-y-2">
+                    <label for="smart_prompt" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="target" class="w-3.5 h-3.5 text-pop"></i>
+                        Fokus / Topik Klip (Opsional)
+                    </label>
+                    <input
+                        type="text"
+                        id="smart_prompt"
+                        name="smart_prompt"
+                        value="{{ old('smart_prompt') }}"
+                        placeholder="Contoh: bagian lucu, ringkasan materi, momen penting..."
+                        class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white placeholder-gray-600 outline-none"
+                    >
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="min_duration" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="hourglass" class="w-3.5 h-3.5 text-accent"></i>
+                            Durasi Minimal (Detik)
+                        </label>
+                        <input
+                            type="number"
+                            id="min_duration"
+                            name="min_duration"
+                            min="15"
+                            max="300"
+                            value="{{ old('min_duration', 15) }}"
+                            class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white outline-none font-mono text-center"
+                        >
+                    </div>
+                    <div class="space-y-2">
+                        <label for="max_clips" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-accent"></i>
+                            Klip Maksimal
+                        </label>
+                        <input
+                            type="number"
+                            id="max_clips"
+                            name="max_clips"
+                            min="1"
+                            max="10"
+                            value="{{ old('max_clips', 5) }}"
+                            class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl px-4 py-3.5 text-sm text-white outline-none font-mono text-center"
+                        >
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2">
+                    <label for="gemini_api_key" class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="key-round" class="w-3.5 h-3.5 text-pop"></i>
+                            Gemini API Key (Opsional)
+                        </span>
+                        @if(session('gemini_api_key'))
+                            <span class="text-[10px] text-pop font-normal lowercase">Tersimpan di sesi</span>
+                        @endif
+                    </label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="gemini_api_key"
+                            name="gemini_api_key"
+                            value="{{ session('gemini_api_key') ? '••••••••••••••••••••••••' : '' }}"
+                            placeholder="Masukkan API Key Anda..."
+                            class="input-field w-full bg-surface-700 border border-surface-500 rounded-xl pl-4 pr-10 py-3.5 text-sm text-white placeholder-gray-600 outline-none font-mono"
+                        >
+                        <button type="button" id="toggle-key-visibility" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-gray-600 leading-normal mt-1">
+                        Kosongkan jika server telah mengonfigurasi `GEMINI_API_KEY` di file `.env`. API Key Anda aman dan hanya disimpan sementara dalam sesi PHP Anda.
+                    </p>
+                </div>
+            </div>
 
             {{-- Submit --}}
             <button type="submit" class="btn-primary w-full text-white font-semibold rounded-xl px-6 py-4 flex items-center justify-center gap-2.5 text-sm">
@@ -240,50 +339,189 @@
         </div>
 
         {{-- Clip list --}}
-        <div class="space-y-2.5 stagger-children">
+        <div class="space-y-4 stagger-children">
             @foreach($clips as $clip)
-            <div class="card-hover bg-surface-800 rounded-xl border border-surface-600 px-5 py-4 flex items-center justify-between gap-4 clip-item" data-clip-id="{{ $clip->id }}" data-status="{{ $clip->status }}">
+                @if($clip->is_smart)
+                    {{-- SMART CLIP COLLECTION CARD --}}
+                    <div class="bg-surface-800 rounded-xl border border-surface-600 overflow-hidden clip-item shadow-xl transition-all duration-300 hover:border-surface-500/80" data-clip-id="{{ $clip->id }}" data-status="{{ $clip->status }}">
+                        
+                        {{-- Parent Header --}}
+                        <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-800/90 border-b border-surface-600/30">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-pop bg-pop/10 border border-pop/20 px-2 py-0.5 rounded uppercase tracking-wider">
+                                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                        Klip Pintar
+                                    </span>
+                                    @if($clip->smart_prompt)
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded">
+                                            Topik: {{ $clip->smart_prompt }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <h3 class="text-sm font-bold text-white truncate mt-2">{{ $clip->video_title ?? 'Menganalisis metadata video...' }}</h3>
+                                <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+                                    <span class="text-[11px] text-gray-500 truncate max-w-[200px] sm:max-w-xs" title="{{ $clip->youtube_url }}">{{ $clip->youtube_url }}</span>
+                                    @if($clip->original_duration)
+                                        <span class="text-[11px] text-gray-600 font-mono">Durasi: {{ $clip->original_duration }}</span>
+                                    @endif
+                                    <span class="text-[11px] text-gray-600">{{ $clip->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
 
-                {{-- Left: info --}}
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-200 truncate font-medium">{{ $clip->youtube_url }}</p>
-                    <div class="flex items-center gap-3 mt-1.5">
-                        <span class="inline-flex items-center gap-1 text-[11px] text-gray-500 font-mono bg-surface-700 px-2 py-0.5 rounded">
-                            <i data-lucide="timer" class="w-3 h-3"></i>
-                            {{ $clip->start_time }} → {{ $clip->end_time }}
-                        </span>
-                        <span class="text-[11px] text-gray-600">{{ $clip->created_at->diffForHumans() }}</span>
+                            {{-- Parent Status Badge --}}
+                            <div class="flex-shrink-0 self-start sm:self-center">
+                                @switch($clip->status)
+                                    @case('pending')
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/[0.06] border border-yellow-500/15">
+                                            <span class="w-2 h-2 rounded-full bg-yellow-500/60 animate-pulse"></span>
+                                            <span class="text-xs text-yellow-400 font-medium">Antri Analisis</span>
+                                        </div>
+                                        @break
+                                    @case('processing')
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/[0.06] border border-accent/15 shimmer-bg">
+                                            <span class="w-2 h-2 rounded-full bg-accent animate-pulse-soft"></span>
+                                            <span class="text-xs text-accent font-medium">Menganalisis...</span>
+                                        </div>
+                                        @break
+                                    @case('completed')
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pop/[0.06] border border-pop/15">
+                                            <span class="w-2 h-2 rounded-full bg-pop"></span>
+                                            <span class="text-xs text-pop font-medium" title="{{ $clip->error_message ?? '' }}">Siap</span>
+                                        </div>
+                                        @break
+                                    @case('failed')
+                                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/[0.06] border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
+                                            <span class="w-2 h-2 rounded-full bg-red-400/60"></span>
+                                            <span class="text-xs text-red-400 font-medium">Gagal</span>
+                                        </div>
+                                        @break
+                                @endswitch
+                            </div>
+                        </div>
+
+                        {{-- Nested Child Clips --}}
+                        @if($clip->children->count() > 0)
+                            <div class="px-5 py-3.5 bg-surface-900/40 space-y-2.5">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                    <i data-lucide="layers" class="w-3.5 h-3.5 text-accent"></i>
+                                    Klip yang Dihasilkan (Min 15d)
+                                </p>
+                                <div class="space-y-2">
+                                    @foreach($clip->children as $child)
+                                        <div class="child-clip-item flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-surface-800/60 border border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-800 transition-all duration-200" data-child-id="{{ $child->id }}" data-status="{{ $child->status }}">
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-start gap-2">
+                                                    <i data-lucide="video" class="w-3.5 h-3.5 text-pop flex-shrink-0 mt-0.5"></i>
+                                                    <div>
+                                                        <h4 class="text-xs font-semibold text-gray-200 leading-normal">{{ str_replace($clip->video_title . ' - ', '', $child->video_title) }}</h4>
+                                                        <span class="inline-flex items-center gap-1 text-[9px] text-gray-500 font-mono bg-surface-700/80 px-1.5 py-0.5 rounded mt-1">
+                                                            <i data-lucide="timer" class="w-2.5 h-2.5"></i>
+                                                            {{ $child->start_time }} → {{ $child->end_time }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-shrink-0">
+                                                @switch($child->status)
+                                                    @case('pending')
+                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-yellow-500/[0.04] border border-yellow-500/10">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500/60 animate-pulse"></span>
+                                                            <span class="text-[10px] text-yellow-400 font-medium">Antri</span>
+                                                        </div>
+                                                        @break
+                                                    @case('processing')
+                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-accent/[0.04] border border-accent/10 shimmer-bg">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse-soft"></span>
+                                                            <span class="text-[10px] text-accent font-medium">Memotong</span>
+                                                        </div>
+                                                        @break
+                                                    @case('completed')
+                                                        <a href="{{ route('clipper.download', $child) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold text-surface-900 bg-pop hover:bg-pop-dim transition-all shadow-md shadow-pop/10 hover:shadow-pop/20 hover:-translate-y-0.5">
+                                                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                                            Unduh
+                                                        </a>
+                                                        @break
+                                                    @case('failed')
+                                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/[0.04] border border-red-500/10 cursor-help" title="{{ $child->error_message }}">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-red-400/60"></span>
+                                                            <span class="text-[10px] text-red-400 font-medium">Gagal</span>
+                                                        </div>
+                                                        @break
+                                                @endswitch
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            {{-- Waiting for analysis completion to generate child clips --}}
+                            @if($clip->status === 'completed')
+                                <div class="px-5 py-4 bg-surface-900/40 text-center border-t border-surface-600/20">
+                                    <p class="text-xs text-gray-500">Tidak ada klip penting dengan durasi minimal 15 detik yang ditemukan.</p>
+                                </div>
+                            @elseif($clip->status === 'pending' || $clip->status === 'processing')
+                                <div class="px-5 py-5 bg-surface-900/40 text-center border-t border-surface-600/20 flex flex-col items-center justify-center gap-2">
+                                    <div class="w-5 h-5 rounded-full border-2 border-accent border-t-transparent animate-spin"></div>
+                                    <p class="text-xs text-gray-500 font-medium animate-pulse-soft">Sedang menganalisis konten video untuk mendeteksi bagian penting...</p>
+                                </div>
+                            @endif
+                        @endif
                     </div>
-                </div>
+                @else
+                    {{-- SINGLE STANDALONE MANUAL CLIP CARD --}}
+                    <div class="card-hover bg-surface-800 rounded-xl border border-surface-600 px-5 py-4 flex items-center justify-between gap-4 clip-item" data-clip-id="{{ $clip->id }}" data-status="{{ $clip->status }}">
+                        
+                        {{-- Left: info --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-gray-400 bg-surface-700/80 px-2 py-0.5 rounded uppercase">
+                                    Manual
+                                </span>
+                                <p class="text-sm font-bold text-white truncate">{{ $clip->video_title ?? $clip->youtube_url }}</p>
+                            </div>
+                            <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+                                <span class="text-[11px] text-gray-500 truncate max-w-[200px] sm:max-w-xs" title="{{ $clip->youtube_url }}">{{ $clip->youtube_url }}</span>
+                                <span class="inline-flex items-center gap-1 text-[11px] text-gray-500 font-mono bg-surface-700 px-2 py-0.5 rounded">
+                                    <i data-lucide="timer" class="w-3 h-3"></i>
+                                    {{ $clip->start_time }} → {{ $clip->end_time }}
+                                </span>
+                                <span class="text-[11px] text-gray-600">{{ $clip->created_at->diffForHumans() }}</span>
+                            </div>
+                        </div>
 
-                {{-- Right: status/action --}}
-                @switch($clip->status)
-                    @case('pending')
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/[0.06] border border-yellow-500/15">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500/60 animate-pulse"></span>
-                            <span class="text-xs text-yellow-400 font-medium">Antri</span>
+                        {{-- Right: status/action --}}
+                        <div class="flex-shrink-0">
+                            @switch($clip->status)
+                                @case('pending')
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/[0.06] border border-yellow-500/15">
+                                        <span class="w-2 h-2 rounded-full bg-yellow-500/60 animate-pulse"></span>
+                                        <span class="text-xs text-yellow-400 font-medium">Antri</span>
+                                    </div>
+                                    @break
+                                @case('processing')
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/[0.06] border border-accent/15 shimmer-bg">
+                                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse-soft"></span>
+                                        <span class="text-xs text-accent font-medium">Memproses</span>
+                                    </div>
+                                    @break
+                                @case('completed')
+                                    <a href="{{ route('clipper.download', $clip) }}" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-surface-900 bg-pop hover:bg-pop-dim transition-all hover:shadow-lg hover:shadow-pop/20 hover:-translate-y-0.5 shadow-md shadow-pop/10">
+                                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                        Unduh
+                                    </a>
+                                    @break
+                                @case('failed')
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/[0.06] border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
+                                        <span class="w-2 h-2 rounded-full bg-red-400/60"></span>
+                                        <span class="text-xs text-red-400 font-medium">Gagal</span>
+                                    </div>
+                                    @break
+                            @endswitch
                         </div>
-                        @break
-                    @case('processing')
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/[0.06] border border-accent/15 shimmer-bg">
-                            <span class="w-2 h-2 rounded-full bg-accent animate-pulse-soft"></span>
-                            <span class="text-xs text-accent font-medium">Memproses</span>
-                        </div>
-                        @break
-                    @case('completed')
-                        <a href="{{ route('clipper.download', $clip) }}" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-surface-900 bg-pop hover:bg-pop-dim transition-all hover:shadow-lg hover:shadow-pop/20 hover:-translate-y-0.5">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                            Unduh
-                        </a>
-                        @break
-                    @case('failed')
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/[0.06] border border-red-500/15 cursor-help" title="{{ $clip->error_message }}">
-                            <span class="w-2 h-2 rounded-full bg-red-400/60"></span>
-                            <span class="text-xs text-red-400 font-medium">Gagal</span>
-                        </div>
-                        @break
-                @endswitch
-            </div>
+                    </div>
+                @endif
             @endforeach
         </div>
     </div>
@@ -316,10 +554,10 @@
         </div>
         <div class="bg-surface-800/50 rounded-xl border border-surface-600 p-5 space-y-3">
             <div class="w-9 h-9 rounded-lg bg-pop/10 flex items-center justify-center">
-                <i data-lucide="repeat" class="w-4 h-4 text-pop"></i>
+                <i data-lucide="sparkles" class="w-4 h-4 text-pop"></i>
             </div>
-            <h4 class="text-sm font-semibold text-white">Auto Retry</h4>
-            <p class="text-xs text-gray-500 leading-relaxed">Jika gagal, sistem otomatis mencoba ulang tanpa perlu submit ulang.</p>
+            <h4 class="text-sm font-semibold text-white">Deteksi Pintar</h4>
+            <p class="text-xs text-gray-500 leading-relaxed">Menggunakan Gemini AI untuk mendeteksi key moments di dalam video secara otomatis.</p>
         </div>
     </div>
 </section>
@@ -328,17 +566,114 @@
 
 @push('scripts')
 <script>
+    // Tab switching logic
+    const tabManual = document.getElementById('tab-manual');
+    const tabSmart = document.getElementById('tab-smart');
+    const manualFields = document.getElementById('manual-fields');
+    const smartFields = document.getElementById('smart-fields');
+    const isSmartInput = document.getElementById('is_smart_input');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+
+    if (tabManual && tabSmart) {
+        tabManual.addEventListener('click', () => {
+            // Styling updates
+            tabManual.classList.add('bg-surface-700', 'text-white', 'shadow-sm');
+            tabManual.classList.remove('text-gray-400', 'hover:text-gray-200');
+            tabSmart.classList.remove('bg-surface-700', 'text-white', 'shadow-sm');
+            tabSmart.classList.add('text-gray-400', 'hover:text-gray-200');
+            
+            // Field display
+            manualFields.classList.remove('hidden');
+            smartFields.classList.add('hidden');
+            
+            // Set hidden field value
+            isSmartInput.value = '0';
+            
+            // Adjust validation requirements
+            startTimeInput.setAttribute('required', 'required');
+            endTimeInput.setAttribute('required', 'required');
+        });
+
+        tabSmart.addEventListener('click', () => {
+            // Styling updates
+            tabSmart.classList.add('bg-surface-700', 'text-white', 'shadow-sm');
+            tabSmart.classList.remove('text-gray-400', 'hover:text-gray-200');
+            tabManual.classList.remove('bg-surface-700', 'text-white', 'shadow-sm');
+            tabManual.classList.add('text-gray-400', 'hover:text-gray-200');
+            
+            // Field display
+            smartFields.classList.remove('hidden');
+            manualFields.classList.add('hidden');
+            
+            // Set hidden field value
+            isSmartInput.value = '1';
+            
+            // Adjust validation requirements
+            startTimeInput.removeAttribute('required');
+            endTimeInput.removeAttribute('required');
+        });
+    }
+
+    // Toggle API key visibility
+    const toggleKeyBtn = document.getElementById('toggle-key-visibility');
+    const keyInput = document.getElementById('gemini_api_key');
+    if (toggleKeyBtn && keyInput) {
+        toggleKeyBtn.addEventListener('click', () => {
+            const isPassword = keyInput.type === 'password';
+            keyInput.type = isPassword ? 'text' : 'password';
+            toggleKeyBtn.innerHTML = isPassword 
+                ? '<i data-lucide="eye-off" class="w-4 h-4"></i>' 
+                : '<i data-lucide="eye" class="w-4 h-4"></i>';
+            lucide.createIcons();
+        });
+    }
+
     // Poll status for active clips
     function pollStatus() {
-        const items = document.querySelectorAll('.clip-item[data-status="pending"], .clip-item[data-status="processing"]');
+        const items = document.querySelectorAll('.clip-item[data-status="pending"], .clip-item[data-status="processing"], .child-clip-item[data-status="pending"], .child-clip-item[data-status="processing"]');
         if (!items.length) return;
 
-        items.forEach(async (el) => {
+        // Group parents to avoid redundant api queries
+        const parentIds = new Set();
+        items.forEach(el => {
+            if (el.classList.contains('child-clip-item')) {
+                const parent = el.closest('.clip-item');
+                if (parent) parentIds.add(parent.dataset.clipId);
+            } else {
+                parentIds.add(el.dataset.clipId);
+            }
+        });
+
+        parentIds.forEach(async (id) => {
             try {
-                const res = await fetch(`/clip/${el.dataset.clipId}/status`);
+                const res = await fetch(`/clip/${id}/status`);
                 const data = await res.json();
-                if (data.status !== el.dataset.status) {
+                
+                const parentEl = document.querySelector(`.clip-item[data-clip-id="${id}"]`);
+                if (!parentEl) return;
+
+                // Check parent status change
+                if (data.status !== parentEl.dataset.status) {
                     window.location.reload();
+                    return;
+                }
+
+                // Check child status/count changes
+                if (data.is_smart && data.children) {
+                    const domChildren = parentEl.querySelectorAll('.child-clip-item');
+                    if (data.children.length !== domChildren.length) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    for (let child of data.children) {
+                        const childDom = parentEl.querySelector(`.child-clip-item[data-child-id="${child.id}"]`);
+                        if (!childDom || child.status !== childDom.dataset.status) {
+                            window.location.reload();
+                            return;
+                        }
+                    }
                 }
             } catch (e) {}
         });
@@ -372,3 +707,4 @@
     });
 </script>
 @endpush
+
