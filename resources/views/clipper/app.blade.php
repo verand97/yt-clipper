@@ -12,7 +12,7 @@
         <div class="animate-fade-up mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-white leading-none tracking-tight flex items-center gap-3">
-                    <span class="bg-gradient-to-r from-accent via-accent-glow to-pop bg-clip-text text-transparent">Clipper Workspace</span>
+                    <span class="bg-linear-to-r from-accent via-accent-glow to-pop bg-clip-text text-transparent">Clipper Workspace</span>
                 </h1>
                 <p class="text-sm text-gray-400 mt-2">Mulai potong video YouTube secara manual atau otomatis dengan kecerdasan buatan.</p>
             </div>
@@ -28,7 +28,7 @@
             {{-- COLUMN 1: CLIPPER FORM --}}
             <div class="lg:col-span-5 space-y-6 animate-fade-up-delay-1">
                 <div class="bg-surface-800 rounded-2xl border border-surface-600 p-6 sm:p-7 shadow-2xl relative overflow-hidden card-hover">
-                    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-accent to-pop"></div>
+                    <div class="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-accent to-pop"></div>
                     
                     {{-- Header Form --}}
                     <div class="flex items-center gap-3 mb-6">
@@ -238,7 +238,7 @@
                 {{-- SECTION 1: ACTIVE QUEUE & PROCESSING --}}
                 @if($activeClips->count() > 0)
                 <div class="bg-surface-800 rounded-2xl border border-surface-600 shadow-2xl relative overflow-hidden flex flex-col">
-                    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-yellow-500 via-accent to-accent-dim"></div>
+                    <div class="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-yellow-500 via-accent to-accent-dim"></div>
                     
                     {{-- Header Queue --}}
                     <div class="px-6 py-5 border-b border-surface-600/50 flex items-center justify-between">
@@ -502,7 +502,7 @@
 
                 {{-- SECTION 2: COMPLETED CLIPS GALLERY --}}
                 <div class="bg-surface-800 rounded-2xl border border-surface-600 shadow-2xl relative overflow-hidden flex flex-col">
-                    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-pop via-green-500 to-emerald-400"></div>
+                    <div class="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-pop via-green-500 to-emerald-400"></div>
                     
                     {{-- Header Completed --}}
                     <div class="px-6 py-5 border-b border-surface-600/50 flex items-center justify-between">

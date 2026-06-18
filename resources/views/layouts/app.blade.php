@@ -194,7 +194,7 @@
     <nav class="sticky top-0 z-50 border-b border-white/4 bg-surface-900/70 backdrop-blur-2xl">
         <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
             <a href="{{ route('clipper.index') }}" class="flex items-center gap-3 group">
-                <div class="relative w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-dim flex items-center justify-center shadow-lg shadow-accent/20">
+                <div class="relative w-8 h-8 rounded-lg bg-linear-to-br from-accent to-accent-dim flex items-center justify-center shadow-lg shadow-accent/20">
                     <i data-lucide="scissors" class="w-4 h-4 text-white"></i>
                 </div>
                 <span class="text-lg font-bold text-white tracking-tight">YT Clipper</span>

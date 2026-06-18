@@ -38,7 +38,7 @@
             {{-- Title --}}
             <h1 class="animate-fade-up-delay-1 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
                 Potong Video YouTube<br>
-                <span class="bg-gradient-to-r from-accent via-accent-glow to-pop bg-clip-text text-transparent">Dalam Sekejap</span>
+                <span class="bg-linear-to-r from-accent via-accent-glow to-pop bg-clip-text text-transparent">Dalam Sekejap</span>
             </h1>
 
             {{-- Subtitle --}}
