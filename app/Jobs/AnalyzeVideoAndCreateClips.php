@@ -26,7 +26,16 @@ class AnalyzeVideoAndCreateClips implements ShouldQueue
 
     public function handle(GeminiService $geminiService): void
     {
-        $this->clipJob->update(['status' => 'processing']);
+        $this->clipJob->refresh();
+        if ($this->clipJob->status === 'failed' && $this->clipJob->error_message === 'Dibatalkan oleh pengguna') {
+            Log::info("Smart Clip parent #{$this->clipJob->id} cancelled before analysis.");
+            return;
+        }
+
+        $this->clipJob->update([
+            'status' => 'processing',
+            'current_step' => 'Membaca metadata video dari YouTube...'
+        ]);
 
         try {
             $ytdlpPath = config('services.ytdlp.path', 'yt-dlp');
@@ -71,6 +80,7 @@ class AnalyzeVideoAndCreateClips implements ShouldQueue
             }
 
             // Step 2: Download subtitles/transcripts
+            $this->clipJob->update(['current_step' => 'Mengunduh subtitle & transkrip video...']);
             Log::info("Downloading subtitles for Smart Clip #{$this->clipJob->id}");
             $subPrefix = 'sub_' . $this->clipJob->id;
             $subOutputPath = $tempDir . '/' . $subPrefix;
@@ -116,6 +126,7 @@ class AnalyzeVideoAndCreateClips implements ShouldQueue
             }
 
             // Step 3: Find key moments using Gemini or fallbacks
+            $this->clipJob->update(['current_step' => 'Menganalisis isi video menggunakan Gemini AI...']);
             $keyMoments = null;
             $usedMethod = 'Gemini AI';
 
@@ -205,6 +216,7 @@ class AnalyzeVideoAndCreateClips implements ShouldQueue
             Log::info("Smart Clip #{$this->clipJob->id} generated " . count($keyMoments) . " clips using method: {$usedMethod}");
 
             // Step 4: Create Child Clip Jobs
+            $this->clipJob->update(['current_step' => 'Membuat antrean potongan klip segmentasi...']);
             foreach ($keyMoments as $moment) {
                 $childClip = ClipJob::create([
                     'parent_id' => $this->clipJob->id,
@@ -223,6 +235,7 @@ class AnalyzeVideoAndCreateClips implements ShouldQueue
 
             $this->clipJob->update([
                 'status' => 'completed',
+                'current_step' => null,
                 'error_message' => "Metode: {$usedMethod}", // Save the method used in the error message or note field
             ]);
 
@@ -238,6 +251,7 @@ class AnalyzeVideoAndCreateClips implements ShouldQueue
 
             $this->clipJob->update([
                 'status' => 'failed',
+                'current_step' => null,
                 'error_message' => $e->getMessage(),
             ]);
         }

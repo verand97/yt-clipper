@@ -191,18 +191,25 @@
 <body class="min-h-screen text-gray-300">
 
     {{-- Navigation --}}
-    <nav class="sticky top-0 z-50 border-b border-white/[0.04] bg-surface-900/70 backdrop-blur-2xl">
-        <div class="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
+    <nav class="sticky top-0 z-50 border-b border-white/4 bg-surface-900/70 backdrop-blur-2xl">
+        <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
             <a href="{{ route('clipper.index') }}" class="flex items-center gap-3 group">
                 <div class="relative w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-dim flex items-center justify-center shadow-lg shadow-accent/20">
                     <i data-lucide="scissors" class="w-4 h-4 text-white"></i>
                 </div>
                 <span class="text-lg font-bold text-white tracking-tight">YT Clipper</span>
             </a>
-            <div class="flex items-center gap-4">
-                <a href="#clipper-form" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/20 text-accent text-sm font-medium hover:bg-accent/15 transition-colors">
-                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                    Clip Baru
+            <div class="flex items-center gap-5 sm:gap-6">
+                <a href="{{ route('clipper.index') }}" class="text-xs sm:text-sm font-semibold {{ Route::currentRouteName() == 'clipper.index' ? 'text-white' : 'text-gray-400 hover:text-white' }} transition-colors">
+                    Beranda
+                </a>
+                <a href="{{ route('clipper.app') }}" class="text-xs sm:text-sm font-semibold {{ Route::currentRouteName() == 'clipper.app' ? 'text-white' : 'text-gray-400 hover:text-white' }} transition-colors">
+                    Workspace
+                </a>
+                <a href="{{ route('clipper.app') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs sm:text-sm font-semibold hover:bg-accent/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Potong Video</span>
+                    <span class="sm:hidden">Potong</span>
                 </a>
             </div>
         </div>
@@ -214,8 +221,8 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="border-t border-white/[0.03] py-8 mt-20">
-        <div class="max-w-5xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <footer class="border-t border-white/3 py-8 mt-20">
+        <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2 text-sm text-gray-600">
                 <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
                 <span>YT Clipper</span>

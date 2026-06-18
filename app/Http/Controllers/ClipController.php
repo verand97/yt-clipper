@@ -11,14 +11,51 @@ class ClipController extends Controller
 {
     public function index()
     {
-        // Get only parent jobs and standalone jobs (parent_id is null)
-        $clips = ClipJob::with('children')
+        try {
+            $completedCount = ClipJob::whereStatus('completed')->count();
+        } catch (\Exception $e) {
+            $completedCount = 0;
+        }
+
+        return view('clipper.index', compact('completedCount'));
+    }
+
+    public function app()
+    {
+        // Get parent/standalone jobs
+        $allClips = ClipJob::with('children')
             ->whereNull('parent_id')
             ->latest()
-            ->take(20)
+            ->take(30)
             ->get();
 
-        return view('clipper.index', compact('clips'));
+        $activeClips = $allClips->filter(function ($clip) {
+            if ($clip->is_smart) {
+                if ($clip->status !== 'completed') {
+                    return true;
+                }
+                $hasActiveChildren = $clip->children->contains(function ($child) {
+                    return in_array($child->status, ['pending', 'processing']);
+                });
+                return $hasActiveChildren;
+            }
+            return in_array($clip->status, ['pending', 'processing', 'failed']);
+        });
+
+        $completedClips = $allClips->filter(function ($clip) {
+            if ($clip->is_smart) {
+                if ($clip->status !== 'completed') {
+                    return false;
+                }
+                $hasActiveChildren = $clip->children->contains(function ($child) {
+                    return in_array($child->status, ['pending', 'processing']);
+                });
+                return !$hasActiveChildren;
+            }
+            return $clip->status === 'completed';
+        });
+
+        return view('clipper.app', compact('activeClips', 'completedClips'));
     }
 
     public function store(Request $request)
@@ -60,7 +97,7 @@ class ClipController extends Controller
 
             \App\Jobs\AnalyzeVideoAndCreateClips::dispatch($clipJob, session('gemini_api_key'));
 
-            return redirect()->route('clipper.index')->with('success', 'Klip Pintar sedang menganalisis video dan membuat segmentasi! Silakan tunggu.');
+            return redirect()->route('clipper.app')->with('success', 'Klip Pintar sedang menganalisis video dan membuat segmentasi! Silakan tunggu.');
         }
 
         // Validate that end_time > start_time for manual clipping
@@ -85,7 +122,7 @@ class ClipController extends Controller
 
         ProcessVideoClip::dispatch($clipJob);
 
-        return redirect()->route('clipper.index')->with('success', 'Video sedang diproses! Silakan tunggu beberapa saat.');
+        return redirect()->route('clipper.app')->with('success', 'Video sedang diproses! Silakan tunggu beberapa saat.');
     }
 
     public function status(ClipJob $clipJob)
@@ -96,12 +133,15 @@ class ClipController extends Controller
                 return [
                     'id' => $child->id,
                     'status' => $child->status,
+                    'current_step' => $child->current_step,
                     'video_title' => $child->video_title,
                     'start_time' => $child->start_time,
                     'end_time' => $child->end_time,
                     'output_path' => $child->output_path,
                     'error_message' => $child->error_message,
                     'download_url' => $child->status === 'completed' ? route('clipper.download', $child) : null,
+                    'elapsed_seconds' => $child->getElapsedSeconds(),
+                    'estimated_duration' => $child->getEstimatedDuration(),
                 ];
             });
         }
@@ -110,11 +150,14 @@ class ClipController extends Controller
             'id' => $clipJob->id,
             'is_smart' => $clipJob->is_smart,
             'status' => $clipJob->status,
+            'current_step' => $clipJob->current_step,
             'video_title' => $clipJob->video_title,
             'original_duration' => $clipJob->original_duration,
             'output_path' => $clipJob->output_path,
             'error_message' => $clipJob->error_message,
             'children' => $children,
+            'elapsed_seconds' => $clipJob->getElapsedSeconds(),
+            'estimated_duration' => $clipJob->getEstimatedDuration(),
         ]);
     }
 
@@ -131,6 +174,35 @@ class ClipController extends Controller
         }
 
         return response()->download($filePath);
+    }
+
+    public function cancel(ClipJob $clipJob)
+    {
+        if (in_array($clipJob->status, ['pending', 'processing'])) {
+            $clipJob->update([
+                'status' => 'failed',
+                'error_message' => 'Dibatalkan oleh pengguna',
+                'current_step' => null,
+            ]);
+
+            if ($clipJob->is_smart) {
+                $clipJob->children()
+                    ->whereIn('status', ['pending', 'processing'])
+                    ->update([
+                        'status' => 'failed',
+                        'error_message' => 'Dibatalkan oleh pengguna',
+                        'current_step' => null,
+                    ]);
+            }
+            return redirect()->back()->with('success', 'Proses pemotongan video telah dibatalkan.');
+        } else {
+            // Delete failed or completed job from database
+            if ($clipJob->is_smart) {
+                $clipJob->children()->delete();
+            }
+            $clipJob->delete();
+            return redirect()->back()->with('success', 'Riwayat pekerjaan berhasil dihapus.');
+        }
     }
 
     private function timeToSeconds(string $time): int

@@ -25,7 +25,16 @@ class ProcessVideoClip implements ShouldQueue
 
     public function handle(): void
     {
-        $this->clipJob->update(['status' => 'processing']);
+        $this->clipJob->refresh();
+        if ($this->clipJob->status === 'failed' && $this->clipJob->error_message === 'Dibatalkan oleh pengguna') {
+            Log::info("Clip job #{$this->clipJob->id} cancelled before processing.");
+            return;
+        }
+
+        $this->clipJob->update([
+            'status' => 'processing',
+            'current_step' => 'Mempersiapkan lingkungan pengerjaan...'
+        ]);
 
         try {
             $outputDir = storage_path('app/public/clips');
@@ -58,6 +67,8 @@ class ProcessVideoClip implements ShouldQueue
                 throw new \Exception('Invalid time range: end_time must be greater than start_time.');
             }
 
+            $this->clipJob->update(['current_step' => 'Mengunduh segmen video dari YouTube...']);
+
             $downloadProcess = new Process([
                 $ytdlpPath,
                 '-f', 'bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4][height<=1080]/best',
@@ -81,6 +92,8 @@ class ProcessVideoClip implements ShouldQueue
             }
 
             // Step 2: Re-encode with FFmpeg for clean output
+            $this->clipJob->update(['current_step' => 'Memotong dan merender video (FFmpeg)...']);
+
             $ffmpegPath = config('services.ffmpeg.path', 'ffmpeg');
             $ffmpegProcess = new Process([
                 $ffmpegPath,
@@ -105,6 +118,7 @@ class ProcessVideoClip implements ShouldQueue
 
             $this->clipJob->update([
                 'status' => 'completed',
+                'current_step' => null,
                 'output_path' => 'clips/' . basename($outputFile),
             ]);
 
@@ -121,6 +135,7 @@ class ProcessVideoClip implements ShouldQueue
 
             $this->clipJob->update([
                 'status' => 'failed',
+                'current_step' => null,
                 'error_message' => $e->getMessage(),
             ]);
         }
